@@ -29,7 +29,7 @@ class MinimalConfluence:
         else:
             raise ValueError("At least one of title or page_id must not be None")
 
-    def create_page(self, space, title, body, parent_id=None, update_message=None):
+    def create_page(self, space, title, body, parent_id=None, message=None):
         """
         Create a new page in a space
 
@@ -38,7 +38,7 @@ class MinimalConfluence:
             title (str): the title for the page
             body (str): the body of the page, in Confluence Storage Format
             parent_id (str or int): the ID of the parent page
-            update_message (str): optional. A message that will appear in Confluence's history
+            message (str): optional. A message that will appear in Confluence's history
 
         Returns:
             The response from the API
@@ -63,12 +63,12 @@ class MinimalConfluence:
                 parent_id = int(parent_id)
             page_structure['ancestors'] = [{'id': parent_id}]
 
-        if update_message is not None:
-            page_structure['version'] = {'message': update_message}
+        if message is not None:
+            page_structure['version'] = {'message': message}
 
         return self.api.content.post(json=page_structure)
 
-    def update_page(self, page, body, update_message=None):
+    def update_page(self, page, body, message=None):
         update_structure = {
             'version': {
                 'number': page.version.number + 1,
@@ -83,7 +83,7 @@ class MinimalConfluence:
             }
         }
 
-        if update_message is not None:
-            update_structure['version']['message'] = update_message
+        if message is not None:
+            update_structure['version']['message'] = message
 
         return self.api.content.put(page.id, json=update_structure)
